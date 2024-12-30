@@ -7,7 +7,7 @@ import { User, UserRoles } from './schema/user.schema';
 export class UserService {
     constructor(private readonly userRepo: UserRepository) {}
 
-    private readonly salt = genSalt();
+    private readonly salt: string = genSalt();
 
     private async checkIfEmailIsTaken(email: string): Promise<boolean> {
         return (await this.userRepo.exists({ email })) !== null;

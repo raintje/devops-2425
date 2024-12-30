@@ -16,7 +16,6 @@ import { UserService } from './user.service';
             isGlobal: true,
             validationSchema: Joi.object({
                 RABBIT_MQ_URI: Joi.string().required(),
-                RABBIT_MQ_MAIL_QUEUE: Joi.string().required(),
                 MONGODB_URI: Joi.string().required(),
             }),
         }),
