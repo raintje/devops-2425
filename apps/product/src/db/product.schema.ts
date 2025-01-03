@@ -1,5 +1,5 @@
 import { AbstractDocument } from '@app/db';
-import { Prop, Schema } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({ versionKey: false })
 export class Product extends AbstractDocument {
@@ -12,3 +12,5 @@ export class Product extends AbstractDocument {
     @Prop({ required: true })
     price: number;
 }
+
+export const ProductSchema = SchemaFactory.createForClass(Product);
