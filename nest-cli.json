@@ -8,31 +8,13 @@
     "tsConfigPath": "apps/devops-2425/tsconfig.app.json"
   },
   "projects": {
-    "userservice": {
+    "user": {
       "type": "application",
-      "root": "apps/userservice",
+      "root": "apps/user",
       "entryFile": "main",
-      "sourceRoot": "apps/userservice/src",
+      "sourceRoot": "apps/user/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/userservice/tsconfig.app.json"
-      }
-    },
-    "billingservice": {
-      "type": "application",
-      "root": "apps/billingservice",
-      "entryFile": "main",
-      "sourceRoot": "apps/billingservice/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/billingservice/tsconfig.app.json"
-      }
-    },
-    "orderservice": {
-      "type": "application",
-      "root": "apps/orderservice",
-      "entryFile": "main",
-      "sourceRoot": "apps/orderservice/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/orderservice/tsconfig.app.json"
+        "tsConfigPath": "apps/user/tsconfig.app.json"
       }
     },
     "db": {
@@ -51,6 +33,24 @@
       "sourceRoot": "libs/rmq/src",
       "compilerOptions": {
         "tsConfigPath": "libs/rmq/tsconfig.lib.json"
+      }
+    },
+    "order": {
+      "type": "application",
+      "root": "apps/order",
+      "entryFile": "main",
+      "sourceRoot": "apps/order/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/order/tsconfig.app.json"
+      }
+    },
+    "product": {
+      "type": "application",
+      "root": "apps/product",
+      "entryFile": "main",
+      "sourceRoot": "apps/product/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/product/tsconfig.app.json"
       }
     }
   }
