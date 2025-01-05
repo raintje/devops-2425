@@ -1,11 +1,14 @@
-import type { CreateUserRequest } from 'apps/user/src/dto/create-user.request';
-import { IsMongoId, IsNotEmpty } from 'class-validator';
+import { IsArray, IsEmail, IsNotEmpty } from 'class-validator';
 
 export class PlaceOrderRequest {
-    @IsMongoId()
+    @IsEmail()
     @IsNotEmpty()
-    userId: string;
+    email: string;
 
     @IsNotEmpty()
-    products: Array<string>
+    password: string;
+
+    @IsNotEmpty()
+    @IsArray()
+    products: Array<string>;
 }
