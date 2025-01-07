@@ -3,20 +3,18 @@ import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
 
 describe('OrderController', () => {
-  let orderController: OrderController;
+    let orderController: OrderController;
 
-  beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-      controllers: [OrderController],
-      providers: [OrderService],
-    }).compile();
+    beforeEach(async () => {
+        const app: TestingModule = await Test.createTestingModule({
+            controllers: [OrderController],
+            providers: [OrderService],
+        }).compile();
 
-    orderController = app.get<OrderController>(OrderController);
-  });
-
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(orderController.getHello()).toBe('Hello World!');
+        orderController = app.get<OrderController>(OrderController);
     });
-  });
+
+    describe('root', () => {
+        it('should instantialize', () => expect(orderController).not.toBe(undefined));
+    });
 });
