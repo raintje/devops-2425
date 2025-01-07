@@ -1,4 +1,4 @@
-import type { HttpService } from '@nestjs/axios';
+import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import type { ClientProxy } from '@nestjs/microservices';
 import type { Product } from 'apps/product/src/db/product.schema';

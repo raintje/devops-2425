@@ -1,0 +1,70 @@
+services:
+    rabbitmq:
+        container_name: rabbitmq
+        image: rabbitmq:3-management-alpine
+        ports:
+            - 5672:5672
+            - 15672:15672
+        volumes:
+            - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+            - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+
+    order:
+        container_name: order
+        build:
+            context: .
+            dockerfile: ./apps/order/Dockerfile
+        volumes:
+            - .:/usr/src/app
+            - /usr/src/app/node_modules
+        ports:
+            - 3000:3000
+
+    product:
+        container_name: product
+        build:
+            context: .
+            dockerfile: ./apps/product/Dockerfile
+        volumes:
+            - .:/usr/src/app
+            - /usr/src/app/node_modules
+        expose:
+            - 3001
+        depends_on:
+            - product-db
+
+    product-db:
+        container_name: product-db
+        image: mongo:latest
+        restart: always
+        expose:
+            - 27017
+        volumes:
+            - product:/data/db
+
+    user:
+        container_name: user
+        build:
+            context: .
+            dockerfile: ./apps/user/Dockerfile
+        env_file:
+            - ./apps/user/.env
+        volumes:
+            - .:/usr/src/app
+            - /usr/src/app/node_modules
+        depends_on:
+            - rabbitmq
+            - user-db
+
+    user-db:
+        container_name: user-db
+        image: mongo:latest
+        restart: always
+        expose:
+            - 27017
+        volumes:
+            - user:/data/db
+
+volumes:
+    product:
+    user:
