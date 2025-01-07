@@ -1,30 +1,22 @@
-FROM node:alpine AS builder
+FROM node:20-slim AS base 
 
-WORKDIR /usr/src/app
+ENV PNPM_HOME="/pnpm"
+ENV PATH="${PNPM_HOME}:$PATH"
 
-COPY package.json .
-COPY pnpm-lock.yaml .
+RUN corepack enable
 
-RUN pnpm i --frozen-lockfile
+COPY . /app
+WORKDIR /app
 
-COPY . .
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm i --prod --frozen-lockfile
 
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm i --frozen-lockfile
 RUN pnpm build order
 
-FROM node:alpine AS production
-
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
-WORKDIR /usr/src/app
-
-COPY package.json .
-COPY pnpm-lock.yaml .
-
-RUN pnpm i --prod
-
-COPY . .
-
-COPY --from=builder /usr/src/app/dist ./dist
-
-CMD ["node", "dist/apps/order/main"]
+FROM base
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/dist /app/dist
+EXPOSE 3000
+CMD ["node", "/app/dist/apps/order/main"]

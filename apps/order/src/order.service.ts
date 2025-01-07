@@ -12,6 +12,11 @@ export class OrderService {
         private readonly httpService: HttpService
     ) {}
 
+    async getProducts(): Promise<Array<Product>> {
+        const { data } = await lastValueFrom(this.httpService.get<Array<Product>>('http://localhost:3001'));
+        return data;
+    }
+
     async placeOrder(email: string, password: string, products: Array<string>) {
         let user: User;
         try {

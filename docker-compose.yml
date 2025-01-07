@@ -17,6 +17,8 @@ services:
         volumes:
             - .:/usr/src/app
             - /usr/src/app/node_modules
+        env_file:
+            - ./apps/order/.env
         ports:
             - 3000:3000
 
@@ -28,6 +30,8 @@ services:
         volumes:
             - .:/usr/src/app
             - /usr/src/app/node_modules
+        env_file:
+            - ./apps/product/.env
         expose:
             - 3001
         depends_on:
