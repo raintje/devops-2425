@@ -6,6 +6,8 @@ ENV PATH="${PNPM_HOME}:$PATH"
 RUN corepack enable
 
 COPY . /app
+COPY ./apps/product/.env.example /app/apps/product/.env
+
 WORKDIR /app
 
 FROM base AS prod-deps

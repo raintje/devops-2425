@@ -15,7 +15,6 @@ import { OrderService } from './order.service';
             validationSchema: Joi.object({
                 RABBIT_MQ_USER_QUEUE: Joi.string().required(),
                 PORT: Joi.number().required(),
-                PRODUCT_SERVICE_HOST: Joi.string().required(),
             }),
             envFilePath: './apps/order/.env',
         }),
