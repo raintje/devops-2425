@@ -84,6 +84,8 @@ services:
             - --mongodb.uri="mongodb://product-db:27017,mongodb://user-db:27017"
             - --collect-all
             - --discovering-mode
+        expose:
+            - 9216
         restart: unless-stopped
         environment:
             - MONGODB_USER=root
@@ -96,7 +98,7 @@ services:
         container_name: prometheus
         image: prom/prometheus:latest
         command:
-            - '--config.file=/etc/prometheus/prometheus.yml'
+            - --config.file=/etc/prometheus/prometheus.yml
         ports:
             - 9090:9090
         restart: unless-stopped
@@ -108,13 +110,17 @@ services:
         container_name: grafana
         image: grafana/grafana:latest
         ports:
-            - 3003:3003
+            - 8080:8080
         restart: unless-stopped
         environment:
             - GF_SECURITY_ADMIN_USER=admin
             - GF_SECURITY_ADMIN_PASSWORD=admin
         volumes:
-            - ./grafana:/etc/grafana/provisioning/datasources
+            - ./grafana/provisioning:/etc/grafana/provisioning
+            - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+            - ./grafana/dashboards:/var/lib/grafana/dashboards
+        depends_on:
+            - prometheus
 
 volumes:
     product:

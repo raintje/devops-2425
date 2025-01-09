@@ -16,6 +16,7 @@ import { ProductService } from './product.service';
             isGlobal: true,
             validationSchema: Joi.object({
                 MONGODB_URI: Joi.string().required(),
+                PORT: Joi.number().required(),
             }),
         }),
         DbModule,

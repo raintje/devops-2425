@@ -13,7 +13,9 @@ export class OrderService {
     ) {}
 
     async getProducts(): Promise<Array<Product>> {
-        const { data } = await lastValueFrom(this.httpService.get<Array<Product>>('http://localhost:3001'));
+        const { data } = await lastValueFrom(
+            this.httpService.get<Array<Product>>('http://localhost:3001')
+        );
         return data;
     }
 
