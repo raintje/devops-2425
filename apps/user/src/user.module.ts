@@ -20,6 +20,7 @@ import { UserService } from './user.service';
                 MONGODB_URI: Joi.string().required(),
                 PORT: Joi.number().required(),
             }),
+            envFilePath: './apps/user/.env',
         }),
         DbModule,
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),

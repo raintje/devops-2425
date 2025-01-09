@@ -18,6 +18,7 @@ import { ProductService } from './product.service';
                 MONGODB_URI: Joi.string().required(),
                 PORT: Joi.number().required(),
             }),
+            envFilePath: './apps/product/.env',
         }),
         DbModule,
         MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
