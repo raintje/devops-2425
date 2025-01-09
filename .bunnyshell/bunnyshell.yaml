@@ -1,0 +1,165 @@
+kind: Environment
+name: preview
+type: primary
+urlHandle: 3fic8s
+components:
+    -
+        kind: Database
+        name: db-exporter
+        dockerCompose:
+            command:
+                - '--mongodb.uri="mongodb://product-db:27017,mongodb://user-db:27017"'
+                - '--collect-all'
+                - '--discovering-mode'
+            environment:
+                MONGODB_PASSWORD: root
+                MONGODB_USER: root
+            image: 'percona/mongodb_exporter:0.43.1'
+            restart: unless-stopped
+            ports:
+                - '9216:9216'
+    -
+        kind: Service
+        name: grafana
+        dockerCompose:
+            environment:
+                GF_SECURITY_ADMIN_PASSWORD: admin
+                GF_SECURITY_ADMIN_USER: admin
+            image: 'grafana/grafana:latest'
+            ports:
+                - '8080:8080'
+            restart: unless-stopped
+        hosts:
+            -
+                hostname: 'grafana-{{ env.base_domain }}'
+                path: /
+                servicePort: 8080
+    -
+        kind: Application
+        name: order
+        gitRepo: 'https://github.com/raintje/devops-2425.git'
+        gitBranch: main
+        gitApplicationPath: /
+        dockerCompose:
+            build:
+                context: .
+                dockerfile: ./apps/order/Dockerfile
+            ports:
+                - '3000:3000'
+        hosts:
+            -
+                hostname: 'order-{{ env.base_domain }}'
+                path: /
+                servicePort: 3000
+    -
+        kind: Application
+        name: product
+        gitRepo: 'https://github.com/raintje/devops-2425.git'
+        gitBranch: main
+        gitApplicationPath: /
+        dockerCompose:
+            build:
+                context: .
+                dockerfile: ./apps/product/Dockerfile
+            ports:
+                - '3001:3001'
+        hosts:
+            -
+                hostname: 'product-{{ env.base_domain }}'
+                path: /
+                servicePort: 3001
+    -
+        kind: Database
+        name: product-db
+        dockerCompose:
+            environment:
+                MONGO_INITDB_ROOT_PASSWORD: root
+                MONGO_INITDB_ROOT_USERNAME: root
+            image: 'mongo:latest'
+            restart: always
+            ports:
+                - '27017:27017'
+        volumes:
+            -
+                name: product
+                mount: /data/db
+                subPath: ''
+    -
+        kind: Service
+        name: prometheus
+        dockerCompose:
+            command:
+                - '--config.file=/etc/prometheus/prometheus.yml'
+            image: 'prom/prometheus:latest'
+            ports:
+                - '9090:9090'
+            restart: unless-stopped
+        hosts:
+            -
+                hostname: 'prometheus-{{ env.base_domain }}'
+                path: /
+                servicePort: 9090
+        volumes:
+            -
+                name: prometheus-data
+                mount: /prometheus
+                subPath: ''
+    -
+        kind: Service
+        name: rabbitmq
+        dockerCompose:
+            image: 'rabbitmq:3-management-alpine'
+            ports:
+                - '5672:5672'
+                - '15672:15672'
+        hosts:
+            -
+                hostname: 'rabbitmq-{{ env.base_domain }}'
+                path: /
+                servicePort: 5672
+    -
+        kind: Application
+        name: user
+        gitRepo: 'https://github.com/raintje/devops-2425.git'
+        gitBranch: main
+        gitApplicationPath: /
+        dockerCompose:
+            build:
+                context: .
+                dockerfile: ./apps/user/Dockerfile
+            ports:
+                - '3002:3002'
+        hosts:
+            -
+                hostname: 'user-{{ env.base_domain }}'
+                path: /
+                servicePort: 3002
+    -
+        kind: Database
+        name: user-db
+        dockerCompose:
+            environment:
+                MONGO_INITDB_ROOT_PASSWORD: root
+                MONGO_INITDB_ROOT_USERNAME: root
+            image: 'mongo:latest'
+            restart: always
+            ports:
+                - '27017:27017'
+        volumes:
+            -
+                name: user
+                mount: /data/db
+                subPath: ''
+volumes:
+    -
+        name: product
+        size: 1Gi
+        type: disk
+    -
+        name: prometheus-data
+        size: 1Gi
+        type: disk
+    -
+        name: user
+        size: 1Gi
+        type: disk
