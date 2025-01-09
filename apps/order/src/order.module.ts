@@ -2,7 +2,9 @@ import { RmqModule } from '@app/rmq';
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import * as Joi from 'joi';
+
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
 
@@ -19,6 +21,7 @@ import { OrderService } from './order.service';
         RmqModule,
         RmqModule.register({ name: 'USER' }),
         HttpModule.register({ timeout: 5000, maxRedirects: 5 }),
+        PrometheusModule.register(),
     ],
     controllers: [OrderController],
     providers: [OrderService],

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import * as Joi from 'joi';
 
 import { DbModule } from '@app/db';
@@ -17,11 +18,13 @@ import { UserService } from './user.service';
             validationSchema: Joi.object({
                 RABBIT_MQ_URI: Joi.string().required(),
                 MONGODB_URI: Joi.string().required(),
+                PORT: Joi.number().required(),
             }),
         }),
         DbModule,
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
         RmqModule,
+        PrometheusModule.register(),
     ],
     controllers: [UserController],
     providers: [UserService, UserRepository],

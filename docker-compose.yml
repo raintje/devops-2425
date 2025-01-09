@@ -43,6 +43,9 @@ services:
         restart: always
         expose:
             - 27017
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=root
         volumes:
             - product:/data/db
 
@@ -51,11 +54,13 @@ services:
         build:
             context: .
             dockerfile: ./apps/user/Dockerfile
-        env_file:
-            - ./apps/user/.env
         volumes:
             - .:/usr/src/app
             - /usr/src/app/node_modules
+        env_file:
+            - ./apps/user/.env
+        expose:
+            - 3002
         depends_on:
             - rabbitmq
             - user-db
@@ -66,9 +71,58 @@ services:
         restart: always
         expose:
             - 27017
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=root
         volumes:
             - user:/data/db
+
+    db-exporter:
+        container_name: db-exporter
+        image: percona/mongodb_exporter:0.43.1
+        command:
+            - --mongodb.uri="mongodb://product-db:27017,mongodb://user-db:27017"
+            - --collect-all
+            - --discovering-mode
+        expose:
+            - 9216
+        restart: unless-stopped
+        environment:
+            - MONGODB_USER=root
+            - MONGODB_PASSWORD=root
+        depends_on:
+            - product-db
+            - user-db
+
+    prometheus:
+        container_name: prometheus
+        image: prom/prometheus:latest
+        command:
+            - --config.file=/etc/prometheus/prometheus.yml
+        ports:
+            - 9090:9090
+        restart: unless-stopped
+        volumes:
+            - ./prometheus:/etc/prometheus
+            - prometheus_data:/prometheus
+
+    grafana:
+        container_name: grafana
+        image: grafana/grafana:latest
+        ports:
+            - 8080:8080
+        restart: unless-stopped
+        environment:
+            - GF_SECURITY_ADMIN_USER=admin
+            - GF_SECURITY_ADMIN_PASSWORD=admin
+        volumes:
+            - ./grafana/provisioning:/etc/grafana/provisioning
+            - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+            - ./grafana/dashboards:/var/lib/grafana/dashboards
+        depends_on:
+            - prometheus
 
 volumes:
     product:
     user:
+    prometheus_data:

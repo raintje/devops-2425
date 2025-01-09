@@ -8,7 +8,7 @@ async function bootstrap() {
 
     app.enableCors();
 
-    await app.listen(configService.get<number>('PORT') ?? 3001);
+    await app.listen(configService.get<number>('PORT') ?? 3000);
 }
 
 bootstrap().catch((e) => console.error(e));
