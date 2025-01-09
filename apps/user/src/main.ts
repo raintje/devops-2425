@@ -2,23 +2,19 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { RmqOptions, Transport } from '@nestjs/microservices';
 import { UserModule } from './user.module';
+import { RmqService } from '@app/rmq';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
-    const app = await NestFactory.createMicroservice<RmqOptions>(UserModule, {
-        transport: Transport.RMQ,
-        options: {
-            urls: ['amqp://rabbitmq:5672'],
-            queue: 'user_queue',
-            queueOptions: {
-                durable: true,
-            },
-            noAck: false,
-        },
-    });
+    const app = await NestFactory.create(UserModule);
 
-    app.useGlobalPipes(new ValidationPipe());
+    const rmqService = app.get<RmqService>(RmqService);
+    const configService = app.get<ConfigService>(ConfigService);
 
-    await app.listen();
+    app.connectMicroservice(rmqService.getOptions('USER'));
+
+    await app.startAllMicroservices();
+    await app.listen(configService.get<number>('PORT') ?? 3002);
 }
 
 bootstrap().catch((e) => console.error(e));

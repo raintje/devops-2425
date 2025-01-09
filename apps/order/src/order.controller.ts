@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
-import type { Response } from 'express';
-import type { PlaceOrderRequest } from './dto/place-order.request';
+import { Response } from 'express';
+import { PlaceOrderRequest } from './dto/place-order.request';
 import { OrderService } from './order.service';
 
 @Controller()
