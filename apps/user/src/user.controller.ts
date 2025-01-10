@@ -15,7 +15,6 @@ export class UserController {
     @MessagePattern({ cmd: 'create_user' })
     createUser(@Payload() data: CreateUserRequest, @Ctx() context: RmqContext) {
         const { email, password } = data;
-
         try {
             const msg = this.userService.createUser(email, password);
             this.rmqService.ack(context);

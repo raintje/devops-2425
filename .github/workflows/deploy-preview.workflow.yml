@@ -5,8 +5,7 @@ on:
             - 'Bunnyshell - Prepare Preview Environment Configuration'
         types:
             - completed
-permissions:
-    pull-requests: write
+permissions: write-all
 jobs:
     load-artifact-from-reusable:
         name: Load artifact values

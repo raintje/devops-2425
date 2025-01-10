@@ -13,9 +13,7 @@ export class OrderService {
     ) {}
 
     async getProducts(): Promise<Array<Product>> {
-        const { data } = await lastValueFrom(
-            this.httpService.get<Array<Product>>('http://localhost:3001')
-        );
+        const { data } = await lastValueFrom(this.httpService.get<Array<Product>>('http://localhost:3001'));
         return data;
     }
 
@@ -42,5 +40,15 @@ export class OrderService {
         }
 
         return { user: user.email, price: prices.reduce((sum, a) => sum + a, 0) };
+    }
+
+    async register(email: string, password: string) {
+        return await lastValueFrom<{ status: number; message: string }>(
+            this.userClient.send({ cmd: 'create_user' }, { email, password })
+        );
+    }
+
+    async login(email: string, password: string) {
+        return await lastValueFrom<User>(this.userClient.send({ cmd: 'get_user' }, { email, password }));
     }
 }
